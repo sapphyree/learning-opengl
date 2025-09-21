@@ -112,26 +112,29 @@ int main() {
 	// data is x,y,z coordinate space, values must be between -1.0 and 1.0
 	// coordinate space is normalised (i.e all values > 1 or < -1 will be outside the screen space) and is converted to screen-space coordinates via the viewport transform function
 	// z coordinate is 0.0f as it wants to be 2D
-	//float vertices[] = {
-	//	-0.5f, -0.5f, 0.0f,
-	//	-0.5f, -0.5f, 0.0f,
-	//	-0.0f, 0.5f, 0.0f
-	//};
-
 	float vertices[] = {
 		0.5f,  0.5f, 0.0f,  // top right
 		0.5f, -0.5f, 0.0f,  // bottom right
 		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+		-0.5f,  0.5f, 0.0f,   // top left
 	};
+
+	// exercise 1 second triangle (right-angled?)
+	float secondTriangleVertices[] = {
+		0.9f, 0.9f, 0.0f,
+		0.9f, 0.6f, 0.0f,
+		-0.9f, 0.9f, 0.0f
+	};
+	
 	// labels vertices with an index starting from 0 w.r.t the array of indices listed above
 	unsigned int indices[] = {
 		0, 1, 3,	// first triangle
-		1, 2, 3		// second triangle
+		1, 2, 3,	// second triangle
+		4, 5, 6
 	};
 
 	// vertex array object (VAO) stores calls to vertex attributes and VBOs to reduce multiple calls
-	unsigned int VAO, VBO;
+	unsigned int VAO, VBO, VAO2, VBO2;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
@@ -158,6 +161,18 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	// ex2
+	glGenVertexArrays(1, &VAO2);
+	glGenBuffers(1, &VBO2);
+
+	glBindVertexArray(VAO2);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangleVertices), secondTriangleVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 	// rendering loop
@@ -169,10 +184,14 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		// draw triangle
+		// ex3 uses new shader program with different fragment shader for yellow vs orange tris
 		glUseProgram(shaderProgramWithYellow);
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3); // drawing from vertex array object
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 3); // drawing from vertex array object
+		glBindVertexArray(VAO2);
+		glUseProgram(shaderProgram);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		// check & call events & swap buffers
