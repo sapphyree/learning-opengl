@@ -28,7 +28,7 @@ int main() {
 	}
 
 	// Shader file readings
-	Shader ourShader("C:\\Users\\Sapphyre\\source\\repos\\Learning OpenGL\\Learning OpenGL\\shader.vs", "C:\\Users\\Sapphyre\\source\\repos\\Learning OpenGL\\Learning OpenGL\\shader.fs");
+	Shader ourShader("./shader.vs", "./shader.fs");
 
 	float vertices[] = {
 		// positions         // colors
